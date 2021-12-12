@@ -5,9 +5,10 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import base.TestBase;
+import base.TestConfiguration;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,15 +17,25 @@ public class Excel_Util {
     public static XSSFWorkbook workbook;
     private static XSSFSheet sheet;
     private static XSSFCell cell;
-  //problem exist here
-   public static void setExcelFile(String sheetName) throws IOException {
-       //Create an object of File class to open xls file
-	   //creating workbook instance that refers to .xls file
-       workbook=new XSSFWorkbook(new FileInputStream(TestBase.getConfigProperty("testdata_path")));
+    
+    public static void setup_testdata()
+    {
+	   //creating workbook instance that refers to .xlsx file
+    	System.out.println("excel setup");
+        try {
+			workbook=new XSSFWorkbook(new FileInputStream(TestConfiguration.getConfigProperty("testdata_path")));
        //creating a Sheet object
-        sheet=workbook.getSheet(sheetName);
-
-   }
+        System.out.println(TestConfiguration.getConfigProperty("testdata_path"));
+        sheet=workbook.getSheet(TestConfiguration.getConfigProperty("testdata_sheetname"));
+        	}
+        catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+    }
    
    public static void deleterow(int from,int to)
    {
@@ -38,19 +49,20 @@ public class Excel_Util {
        //getting the cell value from rowNumber and cell Number
         cell =sheet.getRow(rowNumber).getCell(cellNumber);
       //returning the cell value as string
-        if(cell.getCellType()==cell.CELL_TYPE_NUMERIC)
+        if(cell.getCellType()==cell.CELL_TYPE_NUMERIC ||cell.getCellType()==cell.CELL_TYPE_BLANK)
         	return cell.getRawValue();
         else
         return cell.getStringCellValue();
 
            }
 
-    public static int getRowCount(){
-       int rowcount = sheet.getLastRowNum()+1;
+    public static int getRowCount()
+    {
+    	int rowcount = sheet.getLastRowNum()+1;
        return rowcount;
     }
     
-    public static  int getColCount(){
+    public static int getColCount(){
         int colcount = sheet.getRow(1).getLastCellNum();
         return colcount;
      }
@@ -61,14 +73,25 @@ public class Excel_Util {
     	sheet.getRow(rowNum).getCell(cellNum).setCellValue(cellValue);
     }
     
+    public static void writeexcel()
+    {
+    	try (FileOutputStream out=new FileOutputStream(TestConfiguration.getConfigProperty("testdata_path"))){
+			
+			workbook.write(out);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
     public static void printexcel()
     {
     	int index = 0;
-    	for(int row=0;row<Excel_Util.getRowCount();row++)
+    	for(int row=0;row<getRowCount();row++)
 		{
-			for(int col=0;col<Excel_Util.getColCount();col++)
+			for(int col=0;col<getColCount();col++)
 			{
-				System.out.print(Excel_Util.getCellValue(row, col)+" ");
+				System.out.print(getCellValue(row, col)+" ");
 			}			
 			System.out.println();
 			

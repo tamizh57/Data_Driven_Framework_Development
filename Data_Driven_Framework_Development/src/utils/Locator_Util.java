@@ -6,7 +6,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 
-import base.TestBase;
+import base.TestConfiguration;
 
 public class Locator_Util {
 	private static WebElement element;
@@ -16,16 +16,16 @@ public class Locator_Util {
 		switch(splitdata[0])
 		{
 		case "id":
-			element=TestBase.driver.findElement(By.id(splitdata[1]));
+			element=TestConfiguration.driver.findElement(By.id(splitdata[1]));
 			break;
 		case "css":
-			element=TestBase.driver.findElement(By.cssSelector(splitdata[1]));
+			element=TestConfiguration.driver.findElement(By.cssSelector(splitdata[1]));
 			break;
 		case "class":
-			element=TestBase.driver.findElement(By.className(splitdata[1]));
+			element=TestConfiguration.driver.findElement(By.className(splitdata[1]));
 			break;
 		case "name":
-			element=TestBase.driver.findElement(By.name(splitdata[1]));
+			element=TestConfiguration.driver.findElement(By.name(splitdata[1]));
 			break;
 
 

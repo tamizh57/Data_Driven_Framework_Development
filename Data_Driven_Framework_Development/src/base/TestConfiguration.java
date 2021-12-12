@@ -11,7 +11,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import utils.Excel_Util;
 
 
-public class TestBase {
+public class TestConfiguration {
 	public static WebDriver driver;
 	private static Properties config_prop,objectrep_prop;
 	private static FileInputStream config_fis,objectrep_fis;
@@ -21,17 +21,17 @@ public class TestBase {
 	{
 		try {
 			System.out.println("testbase resource setup");
-			config_fis=new FileInputStream("src\\configuration\\config.properties");
+			config_fis=new FileInputStream("src\\test_configuration\\test_config.properties");
 			config_prop=new Properties();
 			config_prop.load(config_fis);
-			objectrep_fis=new FileInputStream(config_prop.getProperty("objectrep_path"));
+			objectrep_fis=new FileInputStream(getConfigProperty("objectrep_path"));
 			objectrep_prop=new Properties();
 			objectrep_prop.load(objectrep_fis);
-						}
+			}
 			catch (Exception e)
 			{
 		// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 			}
 		
 	}
@@ -45,20 +45,15 @@ public class TestBase {
 	{
 		return config_prop.getProperty(property);
 	}
-	public static void setUpTestData(String sheetname) throws IOException
-	{
-		System.out.println("excel setup");
-		Excel_Util.setExcelFile(sheetname);
-		
-	}
 	
-	public static void setUpDriver(String browser)
+	
+	public static void setUpDriver()
 	{
 		System.out.println("driver setup");
-		switch(browser)
+		switch(getConfigProperty("browser_name"))
 		{
 		case "chrome":
-			System.setProperty("webdriver.chrome.driver", config_prop.getProperty("chrome_path"));
+			System.setProperty("webdriver.chrome.driver", getConfigProperty("driver_path"));
 			driver=new ChromeDriver();
 			break;
 		}
@@ -70,6 +65,7 @@ public class TestBase {
 		try {
 			config_fis.close();
 			objectrep_fis.close();
+			Excel_Util.writeexcel();
 			Excel_Util.workbook.close();
 			driver.quit();
 			
